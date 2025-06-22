@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MCP File Manager</title>
+</head>
+<body>
+  <h2>Upload File</h2>
+  <input type="file" id="fileInput" />
+  <button onclick="uploadFile()">Upload</button>
+
+  <h2>Edit File</h2>
+  <input type="text" id="editFileName" placeholder="Filename" />
+  <input type="text" id="editPrompt" placeholder="Instruction (e.g., uppercase)" />
+  <button onclick="editFile()">Edit</button>
+
+  <h2>Delete File</h2>
+  <input type="text" id="deleteFileName" placeholder="Filename" />
+  <button onclick="deleteFile()">Delete</button>
+
+  <script>
+    async function uploadFile() {
+      const file = document.getElementById('fileInput').files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      await fetch('http://localhost:8000/upload/', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => alert(data.message));
+    }
+
+    async function editFile() {
+      const filename = document.getElementById('editFileName').value;
+      const instruction = document.getElementById('editPrompt').value;
+
+      const formData = new FormData();
+      formData.append('filename', filename);
+      formData.append('instruction', instruction);
+
+      await fetch('http://localhost:8000/edit/', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => alert(data.message || data.error));
+    }
+
+    async function deleteFile() {
+      const filename = document.getElementById('deleteFileName').value;
+
+      const formData = new FormData();
+      formData.append('filename', filename);
+
+      await fetch('http://localhost:8000/delete/', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => alert(data.message || data.error));
+    }
+  </script>
+</body>
+</html>
